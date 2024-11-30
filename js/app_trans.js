@@ -215,7 +215,7 @@ $(document).ready(function() {
             const url = $(this).data('url');
             // songle 読み込み
             $('#player').html(`
-                <div data-api="songle-widget-extra-module" data-url="${url}" id="songle-widget" data-songle-widget-ctrl="1" data-song-start-at="chorus"
+                <div data-api="songle-widget-extra-module" data-url="${url}" id="songle-widget" data-songle-widget-ctrl="0" data-song-start-at="chorus"
                 data-video-player-size-w="575" data-video-player-size-h="280" data-songle-widget-size-w="575" data-songle-widget-size-h="95"></div>
             `);
             $('.rec-select-window .rec-title').removeClass('song-selected'); 
