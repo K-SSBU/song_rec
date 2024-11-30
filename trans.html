@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>DEMO INTERFACE</title>
+        <meta charset="utf-8">
+        <link href="css/app.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="header-text">TRANSITION</div>
+        </div>
+        <div id="left_panel">
+            <div id="map">
+                <canvas id = "song-map"></canvas>
+            </div>
+            <div id="player"></div>
+            <div id="option">
+                <div class=option-button id="return">
+                    <img src="image/advance.png" id="resize-opposite"></div>
+                <div class=option-button id="advance">
+                    <img src="image/advance.png" id="resize"></div>
+                <div class=option-button id="volume">
+                    <img src="image/volume.png" id="resize"></div>
+                <div class=option-button id="detail">
+                    <img src="image/detail.png" id="resize"></div>
+            </div>
+            <div id="circle">
+                <div id="prefer-text">
+                    EXPAND<br>PREFERENCE
+                </div>
+            </div>
+        </div>
+        <div id="right_panel">
+            <div id="song-select">
+                <div id="max-text">MAX</div>
+                <div class=max-button id="max-5">5</div>
+                <div class=max-button id="max-10">10</div>
+                <div class=max-button id="max-25">25</div>
+                <div class=max-button id="max-50">50</div>
+                <div class=max-button id="max-100">100</div>
+                <div id="recommend-text">RECOMMEND</div>
+                <div id="recommend">
+                    <div id="rec-content"></div>
+                </div>
+                <div id="move-map">MOVE MAP</div>
+            </div>
+            <div id="prefer-select">
+                <div class="text-button">
+                    <span class="label">DISLIKE</span>
+                    <div class="rating-button dislike"></div>
+                </div> 
+                <div class="rating-button slightly-dislike"></div>
+                <div class="rating-button neutral"></div>
+                <div class="rating-button slightly-like"></div>
+                <div class="text-button">
+                    <span class="label">LIKE</span>
+                    <div class="rating-button like"></div>
+                </div> 
+            </div>
+        </div>
+        <script type="module" src="js/app_trans.js"></script>
+    </body>
+</html>

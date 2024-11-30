@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SELECT SONGS</title>
+    <link href="css/index_style.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+    <form id="select-songs">
+        <div id="songA-window">
+            <div class="songAB-text">1st SONG</div>
+            <select id="songA">
+                <option value="">Please Select</option>
+                <!-- 動的に生成される選択肢がここに入る -->
+            </select>
+        </div>
+
+    <form id="select-songs">
+        <div id="songB-window">
+            <div class="songAB-text">2nd SONG</div>
+            <select id="songB">
+                <option value="">Please Select</option>
+            </select>
+        </div>
+
+        <div id="trans-button">
+            <div class="button-text">TRANSITION</div>
+        </div>
+
+        <div id="neighbor-button">
+            <div class="button-text">NEIGHBORHOOD</div>
+        </div>
+
+        <div id="number-form">
+            <div id="button-text">NUMBER</div>
+            <input type="number" id="numberInput">
+        </div>
+
+    </form>
+    <script src="js/index_script.js"></script>
+</body>
+</html>
