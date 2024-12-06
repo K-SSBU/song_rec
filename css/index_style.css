@@ -54,7 +54,7 @@ body {
 
 #songA-window select {
     font-size: 16px;
-    width: 500px;
+    width: 600px;
     height: 30px;
     overflow-x: auto;
     cursor: pointer;
@@ -62,7 +62,7 @@ body {
 
 #songB-window select {
     font-size: 16px;
-    width: 500px;
+    width: 600px;
     height: 30px;
     overflow-x: auto;
     cursor: pointer;
@@ -72,7 +72,7 @@ body {
     position:absolute;
     width: 200px;
     height: 50px;
-    left: 150px;
+    left: 30px;
     top: 300px;
     display: flex;
     justify-content: center;
@@ -85,12 +85,29 @@ body {
     background-color:yellow;
 }
 
+#flexer-button {
+    position:absolute;
+    width: 200px;
+    height: 50px;
+    left: 290px;
+    top: 300px;
+    display: flex;
+    justify-content: center;
+    cursor:pointer;
+    background-color:rgba(217,217,217,1);
+    border: 1px solid black;
+}
+
+#flexer-button:hover {
+    background-color:yellow;
+}
+
 #neighbor-button {
     position:absolute;
     width: 200px;
     height: 50px;
-    left: 150px;
-    top: 380px;
+    left: 160px;
+    top: 400px;
     display: flex;
     justify-content: center;
     cursor:pointer;
