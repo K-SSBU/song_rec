@@ -18,6 +18,14 @@ $(document).ready(function() {
       songB.append(option);
     });
   
+    $('#songA').select2({
+      language: "ja" //日本語化
+    });
+
+    $('#songB').select2({
+      language: "ja" //日本語化
+    });
+
     // フォーム送信時の処理
     $('#trans-button').on('click', function(e) {
       e.preventDefault();
@@ -31,6 +39,20 @@ $(document).ready(function() {
       localStorage.setItem('N', number);
 
       window.location.href = 'trans.html';
+    });
+
+    $('#flexer-button').on('click', function(e) {
+      e.preventDefault();
+      
+      var selecteSongA = $('#songA').val();  // 1つ目の楽曲ID
+      var selecteSongB = $('#songB').val();  // 2つ目の楽曲ID
+      var number = $('#numberInput').val(); // 楽曲数
+      
+      localStorage.setItem('songA', selecteSongA);
+      localStorage.setItem('songB', selecteSongB);
+      localStorage.setItem('N', number);
+
+      window.location.href = 'flexer.html';
     });
 
     $('#neighbor-button').on('click', function(e) {

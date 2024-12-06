@@ -44,42 +44,51 @@ $(document).ready(function() {
         );
     }
 
-    // 散布図を描画する関数
-    function renderScatterPlot(scatterData) {
-        //const scatterData = Object.values(data);
-        const ctx = document.getElementById('song-map').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'scatter',
-            data: { 
-                datasets: [
-                    { 
-                        label: '曲', 
-                        data: scatterData, 
-                        backgroundColor: scatterData.map(() => 'rgba(255,255,255, 0.05)'), 
-                        pointRadius: scatterData.map(() => 1.2),
-                    }] },
-            options: {
-                maintainAspectRatio: false,
-                layout: { padding: 20 },
-                animation: { duration: 0 },
-                scales: { x: { display: false }, y: { display: false } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: { label: (tooltipItem) => {
+// 散布図を描画する関数
+function renderScatterPlot(scatterData) {
+    const ctx = document.getElementById('song-map').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'scatter',
+        data: { 
+            datasets: [
+                { 
+                    label: '曲', 
+                    data: scatterData, 
+                    backgroundColor: scatterData.map(() => 'rgba(0,0,0,0.01)'), 
+                    pointRadius: scatterData.map(() => 2),
+                }] 
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: { padding: 20 },
+            animation: { duration: 0 },
+            scales: { 
+                x: { display: false }, 
+                y: { display: false } 
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: { 
+                        label: (tooltipItem) => {
                             const dataPoint = scatterData[tooltipItem.dataIndex];
                             return [`${dataPoint.title}`, `${dataPoint.writer}`];
-                        }},
-                        mode: 'nearest',
-                        intersect: true,
-                        bodyFont: { size: 18, weight: 'bold' }
+                        }
+                    },
+                    mode: 'nearest',
+                    intersect: true,
+                    bodyFont: { size: 18, weight: 'bold' }
+                },
+                zoom: {
+                    zoom: {
+                        wheel: { enabled: true } // マウスホイールでズーム
                     }
                 }
             }
-        });
-        return chart;
-    }
-
+        }
+    });
+    return chart;
+}
 
     // 曲Cと曲Dを見つける関数
     function findSongsCAndD(songData, songA, songB, songAId, songBId) {
@@ -100,7 +109,7 @@ $(document).ready(function() {
             const yOnLine = perpendicularSlope * (songPos[0] - midPoint[0]) + midPoint[1];
             const distanceToLine = Math.abs(songPos[1] - yOnLine);
 
-            if (distanceToLine < 10 && maxDistance < Math.hypot(songPos[0] - songA[0], songPos[1] - songA[1])) { // 10は近傍の閾値
+            if (distanceToLine < 1 && maxDistance < Math.hypot(songPos[0] - songA[0], songPos[1] - songA[1])) { // 10は近傍の閾値
                 maxDistance = Math.hypot(songPos[0] - songA[0], songPos[1] - songA[1]);
                 longestSongC = key;
             }
@@ -143,6 +152,7 @@ $(document).ready(function() {
     // 推薦楽曲を見つける関数
     function findNearestSongs(songData, song1Pos, song2Pos, song1Id, song2Id, numSongs) {
         const nearestSongs = [];
+        let songs = songData;
         for (let i = 1; i < (numSongs + 1); i++) {
             const t = i / (numSongs + 1); // tの値を計算
             const splitPoint = [
@@ -154,10 +164,10 @@ $(document).ready(function() {
             let nearestSong = null;
             let minDistance = Infinity;
 
-            Object.keys(songData).forEach(key => {
-                if (key === song1Id || key === song2Id) return; // 始中間（中間終）端曲は除く
+            Object.keys(songs).forEach(key => {
+                if (key === song1Id || key === song2Id) return; // 始終端曲は除く
 
-                const songPos = songData[key].position; // 楽曲の(x,y)
+                const songPos = songs[key].position; // 楽曲の(x,y)
                 const distance = Math.hypot(songPos[0] - splitPoint[0], songPos[1] - splitPoint[1]); // 分割点とのユークリッド距離
 
                 // 最近傍を求める
@@ -166,6 +176,7 @@ $(document).ready(function() {
                     nearestSong = key;
                 }
             });
+            delete songs[nearestSong];
             nearestSongs.push(nearestSong);
         }
         return nearestSongs;

@@ -9,17 +9,11 @@ $(document).ready(function() {
         var songAId = localStorage.getItem("songA");
         var songBId = localStorage.getItem("songB");
 
-        console.log(N);
-
         const songA = songData[songAId].position;
         const songB = songData[songBId].position;
 
-        // 垂直二等分線に基づく最長の曲Cと最短の曲Dを取得
-        const { longestSongC, nearestSongD } = findSongsCAndD(songData, songA, songB, songAId, songBId);
-        const expandsongId = findexpandSong(songData, songAId, songBId, longestSongC, nearestSongD);
-
         // プレイリストの推薦曲を取得
-        const recommendedPlaylist = createRecommendedPlaylist(songData, songAId, songBId, expandsongId, N);
+        const recommendedPlaylist = createRecommendedPlaylist(songData, songAId, songBId, N);
 
         // プレイリストを描画
         renderPlaylist(recommendedPlaylist, Data);
@@ -92,96 +86,58 @@ function renderScatterPlot(scatterData) {
     return chart;
 }
 
-    // 曲Cと曲Dを見つける関数
-    function findSongsCAndD(songData, songA, songB, songAId, songBId) {
-        const midPoint = [(songA[0] + songB[0]) / 2, (songA[1] + songB[1]) / 2];
-        const slopeAB = (songB[1] - songA[1]) / (songB[0] - songA[0]);
-        const perpendicularSlope = -1 / slopeAB;
+    // 推薦楽曲を見つける関数
+    function findNearestSongs(songData, song1Pos, song2Pos, song1Id, song2Id, numSongs) {
+        const nearestSongs = [];
+        let songs = songData;
+        for (let i = 1; i < (numSongs + 1); i++) {
+            const t = i / (numSongs + 1); // tの値を計算
+            const splitPoint = [
+                song1Pos[0] + (song2Pos[0] - song1Pos[0]) * t,
+                song1Pos[1] + (song2Pos[1] - song1Pos[1]) * t
+            ];
 
-        let longestSongC = null;
-        let nearestSongD = null;
-        let maxDistance = -Infinity;
-        let minDistanceToMid = Infinity;
+            // 2. 各分割点から最も近い楽曲を見つける
+            let nearestSong = null;
+            let minDistance = Infinity;
 
-        Object.entries(songData).forEach(([key, song]) => {
-            if (key === songAId || key === songBId) return;
-            const songPos = song.position;
-            const distanceToMid = Math.hypot(songPos[0] - midPoint[0], songPos[1] - midPoint[1]);
+            Object.keys(songs).forEach(key => {
+                if (key === song1Id || key === song2Id) return; // 始終端曲は除く
 
-            const yOnLine = perpendicularSlope * (songPos[0] - midPoint[0]) + midPoint[1];
-            const distanceToLine = Math.abs(songPos[1] - yOnLine);
+                const songPos = songs[key].position; // 楽曲の(x,y)
+                const distance = Math.hypot(songPos[0] - splitPoint[0], songPos[1] - splitPoint[1]); // 分割点とのユークリッド距離
 
-            if (distanceToLine < 1 && maxDistance < Math.hypot(songPos[0] - songA[0], songPos[1] - songA[1])) { // 1は近傍の閾値
-                maxDistance = Math.hypot(songPos[0] - songA[0], songPos[1] - songA[1]);
-                longestSongC = key;
-            }
-
-            if (distanceToMid < minDistanceToMid) {
-                minDistanceToMid = distanceToMid;
-                nearestSongD = key;
-            }
-        });
-
-        return { longestSongC, nearestSongD };
+                // 最近傍を求める
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestSong = key;
+                }
+            });
+            delete songs[nearestSong];
+            nearestSongs.push(nearestSong);
+        }
+        return nearestSongs;
     }
 
-    // 嗜好拡大曲を見つける関数
-    function findexpandSong(songData, songAId, songBId, longestSongC, nearestSongD) {
-        let expandsongId = null;
-        let minDistanceBetweenCD = Infinity;
+    // 推薦プレイリストを作成する関数
+    function createRecommendedPlaylist(songData, songAId, songBId, N) {
+        const songA = songData[songAId].position;
+        const songB = songData[songBId].position;
+        const k = N - 2; // 推薦曲数
 
-        const posC = songData[longestSongC].position;
-        const posD = songData[nearestSongD].position;
+        const nearestSongsAM = findNearestSongs(songData, songA, songB, songAId, songBId, k); // flexerの推薦
 
-        Object.entries(songData).forEach(([key, song]) => {
-            if ([songAId, songBId, longestSongC, nearestSongD].includes(key)) return;
-
-            const songPos = song.position;
-            const distanceToCD = Math.abs(
-                (songPos[0] - posC[0]) * (posD[1] - posC[1]) - 
-                (songPos[1] - posC[1]) * (posD[0] - posC[0])
-            ) / Math.hypot(posD[0] - posC[0], posD[1] - posC[1]);
-
-            if (distanceToCD < minDistanceBetweenCD) {
-                minDistanceBetweenCD = distanceToCD;
-                expandsongId = key;
-            }
-        });
-        //console.log(expandsongId, songData[expandsongId].title);
-        return expandsongId;
-    }
-
-    // 推薦曲を見つけ、プレイリストを作成する関数
-    function createRecommendedPlaylist(songData, song1Id, song2Id, expandsongId, numSongs) {
-        // プレイリストに始端と終端を含める場合 → [song1Id,song2Id,expandsongId]
-        // プレイリストに始端と終端を含めない場合 → [expandsongId]
-        const recsongs = [song1Id,song2Id,expandsongId]; 
-        const expandsongPos = songData[expandsongId].position // 嗜好拡大曲の(x, y)
-
-        const distances = Object.keys(songData) // Object.keys(songData) → ["sm○○", "sm××", ...]
-        // distances → [{"sm○○", 2.5}, {"sm××", 0.2}, ...]
-                .filter(key => key !== expandsongId && key !== song1Id && key !== song2Id) // 始終端曲,嗜好拡大曲は除く
-                .map(key => {
-                    const songPos = songData[key].position; // 楽曲の(x, y)
-                    const distance = Math.hypot(songPos[0] - expandsongPos[0], songPos[1] - expandsongPos[1]); // 嗜好拡大曲とのユークリッド距離
-                    return { key, distance }; // 楽曲IDと距離のペアを返す
-                });
-                
-        // 距離でソートして最近傍を取得
-        distances.sort((a, b) => a.distance - b.distance); // 距離が小さい順にソート
-        const nearsongs = distances.slice(0, numSongs - 1); // 指定数だけ取得 .slice(start, end)
-
-        nearsongs.forEach(song => recsongs.push(song.key)); // 推薦楽曲リストに追加
-        
-        return recsongs; // 推薦楽曲リスト
+        return [songAId, ...nearestSongsAM, songBId];
     }
 
     // プレイリストを描画する関数
-    // APIから得たurlじゃないとサムネイルが正しく読み込めない
+    // 一部楽曲はサムネイル情報なし
     function renderPlaylist(playlist, Data) {
         const $playlist = $('#rec-content').html('<ul></ul>').find('ul');
         playlist.forEach(songId => {
             const song = Data[songId];
+            //console.log(song);
+            // const icon_Id = songId.match(/\d+/)[0];
             $playlist.append(`
                 <li class="rec-select-window" data-songid="${songId}" data-url="${song.url}" >
                     <div class="rec-icon" style="background-image: url(${song.thumbnails});"></div>
