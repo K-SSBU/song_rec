@@ -5,6 +5,9 @@
     <title>SELECT SONGS</title>
     <link href="css/index_style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/i18n/ja.js"></script>
 </head>
 <body>
     <form id="select-songs">
@@ -12,7 +15,6 @@
             <div class="songAB-text">1st SONG</div>
             <select id="songA">
                 <option value="">Please Select</option>
-                <!-- 動的に生成される選択肢がここに入る -->
             </select>
         </div>
 
@@ -28,13 +30,17 @@
             <div class="button-text">TRANSITION</div>
         </div>
 
+        <div id="flexer-button">
+            <div class="button-text">FLEXER</div>
+        </div>
+
         <div id="neighbor-button">
             <div class="button-text">NEIGHBORHOOD</div>
         </div>
 
         <div id="number-form">
             <div id="button-text">NUMBER</div>
-            <input type="number" id="numberInput">
+            <input type="number" id="numberInput" value="10">
         </div>
 
     </form>
